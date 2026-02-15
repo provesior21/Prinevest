@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dashboard - PrimeVest</title>
+</head>
+<body>
+
+<h2>Dashboard</h2>
+<p id="welcome"></p>
+<p>Balance: $<span id="balance">0</span></p>
+
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js"></script>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT.firebaseapp.com",
+    databaseURL: "https://primevest-2d22f-default-rtdb.firebaseio.com",
+    projectId: "YOUR_PROJECT_ID"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+
+  // Check if user is logged in
+  firebase.auth().onAuthStateChanged(user => {
+    if(user){
+      document.getElementById("welcome").innerText = "Welcome, " + user.email;
+
+      // Fetch balance from database
+      firebase.database().ref("users/" + user.uid).once("value").then(snapshot => {
+        document.getElementById("balance").innerText = snapshot.val().balance;
+      });
+
+    } else {
+      window.location = "index.html"; // Send back to login if not logged in
+    }
+  });
+</script>
+
+</body>
+</html>
